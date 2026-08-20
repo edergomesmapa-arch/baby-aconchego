@@ -1,0 +1,6 @@
+{
+  "name": "baby-aconchego",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site da Baby Aconchego com checkout Mercado Pago via Netlify Functions"
+}
