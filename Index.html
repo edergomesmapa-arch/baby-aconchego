@@ -1,1 +1,947 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baby Aconchego — Roupinhas feitas de carinho</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EE;
+    --cream-deep:#F3EADA;
+    --cocoa:#4A3728;
+    --cocoa-soft:#7A6250;
+    --clay:#E3AFAE;
+    --clay-deep:#CE8F8F;
+    --sage:#A7C0A0;
+    --sage-deep:#87A87E;
+    --honey:#E3A857;
+    --honey-deep:#C98C3A;
+    --line:#DCCEB9;
+    --white:#FFFFFF;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--cream);
+    color:var(--cocoa);
+    font-family:'Quicksand', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    color:var(--cocoa);
+    letter-spacing:-0.01em;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  img{max-width:100%; display:block;}
+
+  .wrap{
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* ---------- Scalloped divider (signature element) ---------- */
+  .scallop{
+    width:100%;
+    height:34px;
+    display:block;
+    line-height:0;
+  }
+  .scallop svg{width:100%; height:100%; display:block;}
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(251,246,238,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 24px;
+    max-width:1120px;
+    margin:0 auto;
+  }
+  .logo{
+    font-family:'Fraunces', serif;
+    font-size:1.4rem;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .logo .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--clay-deep);
+    display:inline-block;
+  }
+  nav.links{
+    display:none;
+    gap:28px;
+    font-weight:600;
+    font-size:0.95rem;
+  }
+  nav.links a{
+    opacity:0.8;
+    transition:opacity .2s;
+  }
+  nav.links a:hover{opacity:1;}
+  @media(min-width:760px){
+    nav.links{display:flex;}
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--honey);
+    color:var(--cocoa);
+    font-weight:700;
+    padding:12px 22px;
+    border-radius:999px;
+    font-size:0.95rem;
+    box-shadow:0 4px 0 var(--honey-deep);
+    transition:transform .15s, box-shadow .15s;
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(2px); box-shadow:0 2px 0 var(--honey-deep);}
+  .btn.small{padding:9px 16px; font-size:0.85rem;}
+
+  .cart-btn{
+    position:relative;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--white);
+    border:1px solid var(--line);
+    color:var(--cocoa);
+    font-weight:700;
+    padding:10px 16px;
+    border-radius:999px;
+    font-size:0.9rem;
+    cursor:pointer;
+  }
+  .cart-btn .snipcart-total-items{
+    background:var(--honey-deep);
+    color:var(--white);
+    border-radius:999px;
+    font-size:0.72rem;
+    padding:1px 7px;
+  }
+  .header-actions{display:flex; align-items:center; gap:10px;}
+
+  /* ---------- Cart drawer ---------- */
+  .cart-overlay{
+    position:fixed; inset:0;
+    background:rgba(74,55,40,0.35);
+    z-index:90;
+    opacity:0; pointer-events:none;
+    transition:opacity .25s;
+  }
+  .cart-overlay.open{opacity:1; pointer-events:auto;}
+
+  .cart-drawer{
+    position:fixed;
+    top:0; right:0;
+    height:100%;
+    width:min(400px, 92vw);
+    background:var(--cream);
+    z-index:91;
+    box-shadow:-10px 0 30px rgba(0,0,0,0.15);
+    transform:translateX(100%);
+    transition:transform .3s ease;
+    display:flex;
+    flex-direction:column;
+  }
+  .cart-drawer.open{transform:translateX(0);}
+  .cart-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:20px 22px;
+    border-bottom:1px solid var(--line);
+  }
+  .cart-head h3{font-size:1.2rem;}
+  .cart-close{
+    background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--cocoa);
+  }
+  .cart-items{
+    flex:1;
+    overflow-y:auto;
+    padding:16px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .cart-empty{color:var(--cocoa-soft); font-size:0.9rem; text-align:center; padding:30px 0;}
+  .cart-line{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:12px;
+  }
+  .cart-line .name{font-weight:700; font-size:0.92rem;}
+  .cart-line .qty-controls{
+    display:flex; align-items:center; gap:8px; margin-top:4px;
+  }
+  .cart-line .qty-controls button{
+    width:24px; height:24px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--white);
+    cursor:pointer;
+    font-weight:700;
+    line-height:1;
+  }
+  .cart-line .remove{
+    font-size:0.75rem;
+    color:var(--clay-deep);
+    font-weight:700;
+    cursor:pointer;
+    background:none;
+    border:none;
+    margin-top:4px;
+  }
+  .cart-line .line-price{font-weight:700; font-family:'Fraunces', serif;}
+  .cart-foot{
+    padding:20px 22px 26px;
+    border-top:1px solid var(--line);
+  }
+  .cart-total-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-weight:700; font-size:1.05rem;
+    margin-bottom:16px;
+  }
+  .checkout-btn{
+    width:100%;
+    justify-content:center;
+    border:none;
+    cursor:pointer;
+    font-size:1rem;
+  }
+  .checkout-btn:disabled{opacity:0.5; cursor:not-allowed;}
+  .cart-note{font-size:0.75rem; color:var(--cocoa-soft); margin-top:10px; text-align:center;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:64px 0 40px;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid;
+    gap:40px;
+    align-items:center;
+  }
+  @media(min-width:860px){
+    .hero-grid{grid-template-columns:1.1fr 0.9fr;}
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-weight:700;
+    font-size:0.8rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--clay-deep);
+    background:var(--white);
+    border:1px solid var(--line);
+    padding:6px 14px;
+    border-radius:999px;
+    margin-bottom:20px;
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 5vw, 3.2rem);
+    line-height:1.08;
+    margin-bottom:20px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    color:var(--clay-deep);
+  }
+  .hero p.lead{
+    font-size:1.1rem;
+    color:var(--cocoa-soft);
+    max-width:46ch;
+    margin-bottom:30px;
+  }
+  .hero-ctas{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:center;
+  }
+  .ghost-link{
+    font-weight:700;
+    border-bottom:2px solid var(--sage-deep);
+    padding-bottom:2px;
+  }
+
+  /* hero visual: illustrated "swaddle" stack */
+  .hero-art{
+    position:relative;
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .blob{
+    position:absolute;
+    inset:6%;
+    background:var(--cream-deep);
+    border-radius:44% 56% 62% 38% / 48% 42% 58% 52%;
+  }
+  .hero-art svg{position:relative; width:78%; height:78%;}
+
+  /* ---------- Trust strip ---------- */
+  .trust{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+    padding:28px 0 8px;
+  }
+  @media(min-width:700px){ .trust{grid-template-columns:repeat(4,1fr);} }
+  .trust-item{
+    text-align:center;
+    padding:16px 8px;
+  }
+  .trust-item .num{
+    font-family:'Fraunces', serif;
+    font-size:1.8rem;
+    font-weight:700;
+    color:var(--sage-deep);
+    display:block;
+  }
+  .trust-item .lbl{
+    font-size:0.82rem;
+    color:var(--cocoa-soft);
+    font-weight:600;
+  }
+
+  /* ---------- Category sections ---------- */
+  section.category{
+    padding:56px 0;
+  }
+  .cat-head{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:16px;
+    margin-bottom:34px;
+  }
+  .cat-head .tag{
+    font-size:0.8rem;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--cocoa-soft);
+    margin-bottom:8px;
+    display:block;
+  }
+  .cat-head h2{
+    font-size:clamp(1.6rem, 3.5vw, 2.3rem);
+  }
+  .cat-head p{
+    max-width:38ch;
+    color:var(--cocoa-soft);
+    font-size:0.95rem;
+  }
+
+  .card-grid{
+    display:grid;
+    gap:20px;
+    grid-template-columns:repeat(auto-fill, minmax(240px,1fr));
+  }
+  .card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 14px 28px -18px rgba(74,55,40,0.35);
+  }
+  
+  .card-photo{
+    width:100%;
+    aspect-ratio:1/1;
+    border-radius:16px;
+    overflow:hidden;
+    background:var(--cream-deep);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:4px;
+  }
+  .card-photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  .card-photo .placeholder-icon{
+    font-size:2rem;
+    opacity:0.55;
+  }
+
+  .card-icon{
+    width:56px;height:56px;
+    border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .card h3{
+    font-size:1.15rem;
+  }
+  .card p.desc{
+    font-size:0.88rem;
+    color:var(--cocoa-soft);
+    flex-grow:1;
+  }
+  .card .price-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:4px;
+  }
+  .price{
+    font-weight:700;
+    font-family:'Fraunces', serif;
+    font-size:1.1rem;
+  }
+  .price small{
+    font-family:'Quicksand', sans-serif;
+    font-weight:600;
+    color:var(--cocoa-soft);
+    font-size:0.7rem;
+    display:block;
+  }
+
+  section.category.alt{background:var(--cream-deep);}
+
+  /* ---------- Why us ---------- */
+  .why{
+    padding:60px 0;
+  }
+  .why-grid{
+    display:grid;
+    gap:28px;
+    grid-template-columns:1fr;
+  }
+  @media(min-width:760px){ .why-grid{grid-template-columns:repeat(3,1fr);} }
+  .why-card{
+    padding:26px;
+    border-radius:20px;
+    background:var(--white);
+    border:1px solid var(--line);
+  }
+  .why-card .ico{font-size:1.6rem; margin-bottom:12px; display:block;}
+  .why-card h3{font-size:1.05rem; margin-bottom:8px;}
+  .why-card p{font-size:0.9rem; color:var(--cocoa-soft);}
+
+  /* ---------- CTA banner ---------- */
+  .cta-banner{
+    background:var(--cocoa);
+    color:var(--cream);
+    border-radius:28px;
+    padding:48px 32px;
+    text-align:center;
+    margin:20px auto 60px;
+    max-width:1120px;
+  }
+  .cta-banner h2{
+    color:var(--cream);
+    font-size:clamp(1.6rem,4vw,2.2rem);
+    margin-bottom:14px;
+  }
+  .cta-banner p{
+    color:#D9C9B6;
+    max-width:46ch;
+    margin:0 auto 26px;
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding:40px 0 30px;
+    border-top:1px solid var(--line);
+  }
+  .foot-grid{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:24px;
+  }
+  .foot-brand .logo{margin-bottom:10px;}
+  .foot-brand p{color:var(--cocoa-soft); font-size:0.88rem; max-width:32ch;}
+  .foot-links h4{
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:12px;
+    color:var(--cocoa-soft);
+  }
+  .foot-links a{
+    display:block;
+    padding:4px 0;
+    font-size:0.92rem;
+    font-weight:600;
+  }
+  .foot-links a:hover{color:var(--clay-deep);}
+  .fine{
+    font-size:0.78rem;
+    color:var(--cocoa-soft);
+    text-align:center;
+  }
+
+  /* editor note banner */
+  .editor-note{
+    background:#FFF7E0;
+    border:1px dashed var(--honey-deep);
+    color:#6B4E17;
+    font-size:0.85rem;
+    padding:14px 18px;
+    border-radius:14px;
+    margin:0 auto 30px;
+    max-width:1120px;
+  }
+  .editor-note strong{display:block; margin-bottom:2px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="#top" class="logo"><span class="dot"></span>Baby Aconchego</a>
+    <nav class="links">
+      <a href="#dia-a-dia">Dia a dia</a>
+      <a href="#ocasioes">Ocasiões</a>
+      <a href="#enxoval">Enxoval</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <div class="header-actions">
+      <button class="cart-btn" onclick="toggleCart(true)">
+        🛒 Carrinho <span id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart(false)"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-head">
+    <h3>Seu carrinho</h3>
+    <button class="cart-close" onclick="toggleCart(false)">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <p class="cart-empty">Seu carrinho está vazio.</p>
+  </div>
+  <div class="cart-foot">
+    <div class="cart-total-row">
+      <span>Total</span>
+      <span id="cartTotal">R$ 0,00</span>
+    </div>
+    <button class="btn checkout-btn" id="checkoutBtn" onclick="finalizarCompra()" disabled>
+      Finalizar compra (Pix / Cartão)
+    </button>
+    <p class="cart-note">Pagamento seguro processado pelo Mercado Pago.</p>
+  </div>
+</div>
+
+<main id="top">
+
+  <div class="wrap">
+    <div class="editor-note">
+      <strong>Nota pra você editar antes de publicar:</strong>
+      esse site agora precisa ser publicado com Netlify conectado ao GitHub (não é mais só arrastar o arquivo) e precisa da sua Chave de Acesso (Access Token) do Mercado Pago configurada nas variáveis de ambiente do Netlify (MP_ACCESS_TOKEN). Veja o passo a passo que te mandei na conversa.
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">🧸 Feito com carinho, pra todo o Brasil</span>
+        <p style="background:var(--sage-deep); color:#fff; font-weight:700; padding:8px 16px; border-radius:999px; display:inline-block; font-size:0.85rem; margin:0 0 16px;">🚚 Frete grátis para todo o Brasil</p>
+        <h1>Roupinhas que abraçam <em>antes mesmo do abraço.</em></h1>
+        <p class="lead">Peças macias e delicadas pro dia a dia, pras ocasiões especiais e pro enxoval completo do seu bebê. Cada detalhe pensado pra pele sensível e pro seu coração de mãe (ou pai).</p>
+        <div class="hero-ctas">
+          <a class="btn" href="#dia-a-dia">🛍️ Ver coleções</a>
+          <a class="ghost-link" href="#enxoval">Enxoval completo ↓</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="blob"></div>
+        <svg viewBox="0 0 200 200" fill="none">
+          <!-- onesie illustration -->
+          <path d="M70 30 C70 18 80 12 100 12 C120 12 130 18 130 30 L130 42 L150 55 L142 78 L130 68 L130 175 C130 182 124 188 116 188 L84 188 C76 188 70 182 70 175 L70 68 L58 78 L50 55 L70 42 Z" fill="#F3EADA" stroke="#4A3728" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="88" cy="55" r="4" fill="#CE8F8F"/>
+          <circle cx="100" cy="55" r="4" fill="#E3A857"/>
+          <circle cx="112" cy="55" r="4" fill="#87A87E"/>
+          <path d="M84 100 Q100 112 116 100" stroke="#CE8F8F" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="trust">
+      <div class="trust-item"><span class="num">100%</span><span class="lbl">Algodão macio</span></div>
+      <div class="trust-item"><span class="num">3</span><span class="lbl">Coleções completas</span></div>
+      <div class="trust-item"><span class="num">RJ</span><span class="lbl">Entrega local rápida</span></div>
+      <div class="trust-item"><span class="num">💜</span><span class="lbl">Feito à mão, com amor</span></div>
+    </div>
+  </div>
+
+  <div class="scallop" aria-hidden="true">
+    <svg preserveAspectRatio="none" viewBox="0 0 400 20"><path d="M0 0 Q10 20 20 0 T40 0 T60 0 T80 0 T100 0 T120 0 T140 0 T160 0 T180 0 T200 0 T220 0 T240 0 T260 0 T280 0 T300 0 T320 0 T340 0 T360 0 T380 0 T400 0 V20 H0 Z" fill="#F3EADA"/></svg>
+  </div>
+
+  <!-- CATEGORY 1 -->
+  <section class="category alt" id="dia-a-dia">
+    <div class="wrap">
+      <div class="cat-head">
+        <div>
+          <span class="tag">Coleção 01</span>
+          <h2>Dia a dia</h2>
+          <p>Bodies, macacões e conjuntinhos confortáveis pra brincar, dormir e crescer com liberdade.</p>
+        </div>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-photo"><img src="images/macacao-canelado-ml.png" alt="Macacão canelado manga longa"></div>
+          <h3>Macacão canelado manga longa</h3>
+          <p class="desc">Mais de 2.000 vendas, nota 4.7 (290 avaliações), #6 sucesso local — algodão macio, várias cores disponíveis.</p>
+          <div class="price-row">
+            <span class="price">R$ 77<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('macacao-canelado-ml', 'Macacão canelado manga longa', 77.90)">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-photo"><img src="images/conjunto-listrado-bloomer-verao.png" alt="Conjunto camiseta listrada e bloomer"></div>
+          <h3>Conjunto camiseta listrada e bloomer</h3>
+          <p class="desc">Mais de 600 vendas, nota 4.8 — conjunto verão 2 peças, fofo e leve, ideal pro dia a dia do bebê.</p>
+          <div class="price-row">
+            <span class="price">R$ 99<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('conjunto-listrado-bloomer-verao', 'Conjunto camiseta listrada e bloomer', 99.90)">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-photo"><img src="images/calca-musselina-algodao.png" alt="Calça de bebê 100% algodão musselina"></div>
+          <h3>Calça de bebê 100% algodão musselina</h3>
+          <p class="desc">Mais de 1.000 vendas, nota 4.8 (130 avaliações) — calça simples, 100% algodão, ótima pro recém-nascido.</p>
+          <div class="price-row">
+            <span class="price">R$ 31<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('calca-musselina-algodao', 'Calça de bebê 100% algodão musselina', 31.90)">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-photo"><img src="images/macacao-nervuras-manga-curta.png" alt="Macacão com nervuras manga curta"></div>
+          <h3>Macacão com nervuras manga curta</h3>
+          <p class="desc">256 vendas, nota 5.0 — algodão, manga curta, unissex, 0-12 meses.</p>
+          <div class="price-row">
+            <span class="price">R$ 55<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('macacao-nervuras-manga-curta', 'Macacão com nervuras manga curta', 55.90)">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-photo"><img src="images/bloomer-jeans-babados.png" alt="Bloomer/shorts jeans com babados"></div>
+          <h3>Bloomer/shorts jeans com babados</h3>
+          <p class="desc">Mais de 600 vendas, nota 4.8 (42 avaliações) — denim macio, cintura com babado, verão, 0-3 anos.</p>
+          <div class="price-row">
+            <span class="price">R$ 60<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('bloomer-jeans-babados', 'Bloomer/shorts jeans com babados', 60.90)">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-photo"><img src="images/conjunto-2pcs-top-jumper.png" alt="Conjunto 2 peças top + macacão jumper"></div>
+          <h3>Conjunto 2 peças top + macacão jumper</h3>
+          <p class="desc">Mais de 1.000 vendas, nota 4.9 (226 avaliações) — manga longa, uso diário, recém-nascido.</p>
+          <div class="price-row">
+            <span class="price">R$ 119<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('conjunto-2pcs-top-jumper', 'Conjunto 2 peças top + macacão jumper', 119.90)">Adicionar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="scallop" aria-hidden="true" style="transform:rotate(180deg);">
+    <svg preserveAspectRatio="none" viewBox="0 0 400 20"><path d="M0 0 Q10 20 20 0 T40 0 T60 0 T80 0 T100 0 T120 0 T140 0 T160 0 T180 0 T200 0 T220 0 T240 0 T260 0 T280 0 T300 0 T320 0 T340 0 T360 0 T380 0 T400 0 V20 H0 Z" fill="#F3EADA"/></svg>
+  </div>
+
+  <!-- CATEGORY 2 -->
+  <section class="category" id="ocasioes">
+    <div class="wrap">
+      <div class="cat-head">
+        <div>
+          <span class="tag">Coleção 02</span>
+          <h2>Ocasiões especiais</h2>
+          <p>Peças elegantes pro batizado, aniversário, chá revelação e outros momentos inesquecíveis.</p>
+        </div>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-photo"><img src="images/vestido-floral-verao-princesa.png" alt="Vestido floral verão estilo princesa"></div>
+          <h3>Vestido floral verão estilo princesa</h3>
+          <p class="desc">Mais de 4.000 vendas, nota 4.7 — vestido leve e respirável, manga curta, estampa floral, 0-3 anos.</p>
+          <div class="price-row">
+            <span class="price">R$ 47<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('vestido-floral-verao-princesa', 'Vestido floral verão estilo princesa', 47.90)">Adicionar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="scallop" aria-hidden="true">
+    <svg preserveAspectRatio="none" viewBox="0 0 400 20"><path d="M0 0 Q10 20 20 0 T40 0 T60 0 T80 0 T100 0 T120 0 T140 0 T160 0 T180 0 T200 0 T220 0 T240 0 T260 0 T280 0 T300 0 T320 0 T340 0 T360 0 T380 0 T400 0 V20 H0 Z" fill="#F3EADA"/></svg>
+  </div>
+
+  <!-- CATEGORY 3 -->
+  <section class="category alt" id="enxoval">
+    <div class="wrap">
+      <div class="cat-head">
+        <div>
+          <span class="tag">Coleção 03</span>
+          <h2>Enxoval completo</h2>
+          <p>Tudo o que o bebê precisa pra chegar em casa com aconchego: roupas, mantas e acessórios.</p>
+        </div>
+      </div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-photo"><img src="images/macacao-bichinhos-premium.png" alt="Macacão alta qualidade bichinhos"></div>
+          <h3>Macacão alta qualidade bichinhos</h3>
+          <p class="desc">Mais de 800 vendas, nota 4.8 (103 avaliações) — bodysuit estampa de bichinhos, manga curta, casual, ótimo pro verão.</p>
+          <div class="price-row">
+            <span class="price">R$ 49<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('macacao-bichinhos-premium', 'Macacão alta qualidade bichinhos', 49.90)">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-photo"><img src="images/saco-de-dormir-rn.png" alt="Saco de dormir para bebê recém-nascido"></div>
+          <h3>Saco de dormir para bebê recém-nascido</h3>
+          <p class="desc">Mais de 1.000 vendas, nota 4.8 (186 avaliações) — sem mangas, 100% algodão, zíper duplo pra facilitar troca de fralda.</p>
+          <div class="price-row">
+            <span class="price">R$ 94<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('saco-de-dormir-rn', 'Saco de dormir para bebê recém-nascido', 94.90)">Adicionar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-photo"><img src="images/conjunto-3pcs-macacao-calca-chapeu.png" alt="Conjunto 3 peças macacão + calça + chapéu"></div>
+          <h3>Conjunto 3 peças macacão + calça + chapéu</h3>
+          <p class="desc">Mais de 1.000 vendas, nota 4.8 (257 avaliações) — macacão manga longa colorido, calça e chapéu, primavera/outono, 0-18 meses.</p>
+          <div class="price-row">
+            <span class="price">R$ 74<small>a partir de</small></span>
+            <button class="btn small" onclick="addToCart('conjunto-3pcs-macacao-calca-chapeu', 'Conjunto 3 peças macacão + calça + chapéu', 74.90)">Adicionar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why">
+    <div class="wrap">
+      <div class="cat-head">
+        <div>
+          <span class="tag">Por que a Baby Aconchego</span>
+          <h2>Carinho em cada costura</h2>
+        </div>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <span class="ico">🌿</span>
+          <h3>Tecidos selecionados</h3>
+          <p>Algodão macio e hipoalergênico, pensado pra pele sensível do bebê.</p>
+        </div>
+        <div class="why-card">
+          <span class="ico">📦</span>
+          <h3>Envio pra todo o Brasil</h3>
+          <p>Enviamos pra qualquer cidade do país. Prazo médio de entrega: 15 a 40 dias.</p>
+        </div>
+        <div class="why-card">
+          <span class="ico">💬</span>
+          <h3>Atendimento direto</h3>
+          <p>Fale com a gente pelo WhatsApp e tire todas as dúvidas antes de comprar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <div class="wrap">
+    <div class="cta-banner">
+      <h2>Vamos vestir seu bebê de aconchego?</h2>
+      <p>Escolha as peças que combinam com o seu bebê e finalize a compra com cartão de crédito, direto aqui no site.</p>
+      <a class="btn" href="#dia-a-dia">🛍️ Ver todos os produtos</a>
+    </div>
+  </div>
+
+</main>
+
+<footer id="contato">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="logo"><span class="dot"></span>Baby Aconchego</a>
+        <p>Roupinhas e enxoval feitos com carinho pra cada fase do seu bebê.</p>
+        <p style="margin-top:10px; font-weight:700; color:var(--sage-deep); font-size:0.85rem;">🚚 Enviamos para todo o Brasil</p>
+      </div>
+      <div class="foot-links">
+        <h4>Coleções</h4>
+        <a href="#dia-a-dia">Dia a dia</a>
+        <a href="#ocasioes">Ocasiões especiais</a>
+        <a href="#enxoval">Enxoval completo</a>
+      </div>
+      <div class="foot-links">
+        <h4>Contato</h4>
+        <a href="mailto:babyaconchegoloja@gmail.com">📧 babyaconchegoloja@gmail.com</a>
+      </div>
+    </div>
+    <p class="fine">© 2026 Baby Aconchego. Enviamos para todo o Brasil. Feito com 💜.</p>
+  </div>
+</footer>
+
+<script>
+  // ===================== CARRINHO PRÓPRIO =====================
+  // Guarda os itens no localStorage do navegador do cliente.
+  let cart = JSON.parse(localStorage.getItem('babyAconchegoCart') || '[]');
+
+  function saveCart(){
+    localStorage.setItem('babyAconchegoCart', JSON.stringify(cart));
+    renderCart();
+  }
+
+  function addToCart(id, name, price){
+    const existing = cart.find(i => i.id === id);
+    if(existing){
+      existing.quantity += 1;
+    } else {
+      cart.push({ id, title: name, price, quantity: 1 });
+    }
+    saveCart();
+    toggleCart(true);
+  }
+
+  function changeQty(id, delta){
+    const item = cart.find(i => i.id === id);
+    if(!item) return;
+    item.quantity += delta;
+    if(item.quantity <= 0){
+      cart = cart.filter(i => i.id !== id);
+    }
+    saveCart();
+  }
+
+  function removeItem(id){
+    cart = cart.filter(i => i.id !== id);
+    saveCart();
+  }
+
+  function formatBRL(v){
+    return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+
+  function renderCart(){
+    const container = document.getElementById('cartItems');
+    const countEl = document.getElementById('cartCount');
+    const totalEl = document.getElementById('cartTotal');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+
+    const totalItems = cart.reduce((s,i)=>s+i.quantity,0);
+    countEl.textContent = totalItems;
+
+    if(cart.length === 0){
+      container.innerHTML = '<p class="cart-empty">Seu carrinho está vazio.</p>';
+      checkoutBtn.disabled = true;
+    } else {
+      container.innerHTML = cart.map(item => `
+        <div class="cart-line">
+          <div>
+            <div class="name">${item.title}</div>
+            <div class="qty-controls">
+              <button onclick="changeQty('${item.id}', -1)">−</button>
+              <span>${item.quantity}</span>
+              <button onclick="changeQty('${item.id}', 1)">+</button>
+            </div>
+            <button class="remove" onclick="removeItem('${item.id}')">Remover</button>
+          </div>
+          <div class="line-price">${formatBRL(item.price * item.quantity)}</div>
+        </div>
+      `).join('');
+      checkoutBtn.disabled = false;
+    }
+
+    const total = cart.reduce((s,i)=>s + i.price*i.quantity, 0);
+    totalEl.textContent = formatBRL(total);
+  }
+
+  function toggleCart(open){
+    document.getElementById('cartDrawer').classList.toggle('open', open);
+    document.getElementById('cartOverlay').classList.toggle('open', open);
+  }
+
+  async function finalizarCompra(){
+    const btn = document.getElementById('checkoutBtn');
+    btn.disabled = true;
+    btn.textContent = 'Gerando pagamento...';
+
+    try{
+      const resp = await fetch('/.netlify/functions/create-preference', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cart })
+      });
+      const data = await resp.json();
+
+      if(!resp.ok || !data.init_point){
+        throw new Error(data.error ? JSON.stringify(data.error) : 'Erro ao gerar pagamento');
+      }
+
+      // Limpa o carrinho e manda o cliente pro Checkout do Mercado Pago
+      localStorage.removeItem('babyAconchegoCart');
+      window.location.href = data.init_point;
+
+    } catch(err){
+      alert('Não foi possível iniciar o pagamento. Verifique se a Chave de Acesso do Mercado Pago (MP_ACCESS_TOKEN) está configurada no Netlify. Detalhe: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = 'Finalizar compra (Pix / Cartão)';
+    }
+  }
+
+  renderCart();
+</script>
+
+</body>
+</html>
 
